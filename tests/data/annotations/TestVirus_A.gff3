@@ -1,0 +1,3 @@
+##gff-version 3
+TestVirus_A	.	gene	801	1600	.	+	.	ID=gene_NS5;Name=NS5
+TestVirus_A	.	CDS	801	1600	.	+	0	ID=cds_NS5;Parent=gene_NS5;Name=NS5;product=RNA-dependent RNA polymerase

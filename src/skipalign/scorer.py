@@ -23,6 +23,7 @@ def score_windows(
     genome_lengths: dict[str, int],
     window_size: int = 300,
     min_genome_count: int = 15,
+    step: int = 1,
 ) -> list[ScoredWindow]:
     """Score sliding windows by unitig coverage and genome count.
 
@@ -47,7 +48,7 @@ def score_windows(
 
     scored: list[ScoredWindow] = []
 
-    for win_start in range(0, ref_length - window_size + 1, 1):
+    for win_start in range(0, ref_length - window_size + 1, step):
         win_end = win_start + window_size
         total_coverage = 0
         genomes_with_hits: set[str] = set()
