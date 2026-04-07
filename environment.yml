@@ -1,0 +1,11 @@
+name: skipalign
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.10
+  - mafft
+  - pip
+  - pip:
+    - -e .
