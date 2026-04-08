@@ -16,7 +16,7 @@ This makes it possible to design pan-genus diagnostic assays for highly variable
 
 ## Pipeline
 
-![Pipeline Overview](docs/pipeline_overview.png)
+![Pipeline Overview](docs/pipeline_overview.svg)
 
 The pipeline discovers conserved regions without global alignment, then designs TaqMan primer-probe sets with in-silico validation:
 

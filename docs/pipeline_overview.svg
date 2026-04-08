@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="200" viewBox="0 0 900 200" role="img" aria-label="skipalign pipeline diagram">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f3460"/>
+    </marker>
+    <style>
+      .num { font: 700 11px 'Segoe UI', Arial, sans-serif; fill: #0f3460; }
+      .icon { font: 20px 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; }
+      .title { font: 700 11px 'Segoe UI', Arial, sans-serif; fill: #102a43; }
+      .desc { font: 400 9px 'Segoe UI', Arial, sans-serif; fill: #486581; }
+      .box { fill: #e8f0fe; stroke: #bfd3f2; stroke-width: 1.2; }
+      .arrow { stroke: #0f3460; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="900" height="200" fill="#ffffff"/>
+
+  <line x1="126" y1="100" x2="138" y2="100" class="arrow"/>
+  <line x1="248" y1="100" x2="260" y2="100" class="arrow"/>
+  <line x1="370" y1="100" x2="382" y2="100" class="arrow"/>
+  <line x1="492" y1="100" x2="504" y2="100" class="arrow"/>
+  <line x1="614" y1="100" x2="626" y2="100" class="arrow"/>
+  <line x1="736" y1="100" x2="748" y2="100" class="arrow"/>
+
+  <g transform="translate(20,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">1</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">📁</text>
+    <text x="53" y="64" text-anchor="middle" class="title">FASTA Input</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Load sequence files</text>
+  </g>
+
+  <g transform="translate(142,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">2</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">🧬</text>
+    <text x="53" y="64" text-anchor="middle" class="title">k-mer Counting</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Count sequence motifs</text>
+  </g>
+
+  <g transform="translate(264,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">3</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">🕸️</text>
+    <text x="53" y="64" text-anchor="middle" class="title">De Bruijn Graph</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Build overlap graph</text>
+  </g>
+
+  <g transform="translate(386,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">4</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">🎯</text>
+    <text x="53" y="64" text-anchor="middle" class="title">Genome Mapping</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Align graph to genome</text>
+  </g>
+
+  <g transform="translate(508,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">5</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">📊</text>
+    <text x="53" y="64" text-anchor="middle" class="title">Window Scoring</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Rank candidate regions</text>
+  </g>
+
+  <g transform="translate(630,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">6</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">✂️</text>
+    <text x="53" y="64" text-anchor="middle" class="title">Primer Design</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Generate primer pairs</text>
+  </g>
+
+  <g transform="translate(752,40)">
+    <rect class="box" x="0" y="0" rx="14" ry="14" width="106" height="120"/>
+    <text x="53" y="18" text-anchor="middle" class="num">7</text>
+    <text x="53" y="42" text-anchor="middle" class="icon">📄✓</text>
+    <text x="53" y="64" text-anchor="middle" class="title">Validation &amp; Report</text>
+    <text x="53" y="84" text-anchor="middle" class="desc">Verify and summarize</text>
+  </g>
+</svg>
