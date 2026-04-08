@@ -24,6 +24,7 @@ from skipalign.primer import (
     extract_conserved_region,
     run_mafft,
 )
+from skipalign.reporter import generate_html_report
 from skipalign.scorer import ScoredWindow, score_windows
 from skipalign.unitig import extract_unitigs
 
@@ -154,6 +155,18 @@ def run_pipeline(
         primer_count=len(primers),
         elapsed=elapsed,
     )
+
+    # Generate HTML report
+    if not no_report:
+        generate_html_report(
+            output_path=out_path / "report.html",
+            summary=summary,
+            windows=windows,
+            primers=primers,
+            conservation_scores=conservation,
+            region_start=region_start,
+            region_end=region_end,
+        )
 
     console.print(f"\n  [green]✓ Pipeline complete in {elapsed:.1f}s[/green]")
     console.print(f"  Results: {out_path}/")
