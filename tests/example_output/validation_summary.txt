@@ -1,0 +1,17 @@
+MFEprimer In-silico PCR Validation
+========================================
+
+PS_001: 5/8 genomes (62.5% coverage)
+  Forward:  CCGTTGCCTAAACCTATTTGAA
+  Reverse:  ATTGAAGAGGACGTCTTGTTTG
+  Amplicons: 5 hits, sizes 94-94bp
+
+PS_002: 5/8 genomes (62.5% coverage)
+  Forward:  CCGTTGCCTAAACCTATTTGAA
+  Reverse:  CATTGAAGAGGACGTCTTGTTT
+  Amplicons: 5 hits, sizes 95-95bp
+
+PS_003: 5/8 genomes (62.5% coverage)
+  Forward:  CCGTTGCCTAAACCTATTTGAA
+  Reverse:  AAACATTGAAGAGGACGTCTTG
+  Amplicons: 5 hits, sizes 98-98bp

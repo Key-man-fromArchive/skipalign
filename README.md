@@ -16,20 +16,16 @@ This makes it possible to design pan-genus diagnostic assays for highly variable
 
 ## Pipeline
 
-```
-Input FASTA genomes
-    │
-    ├─ k-mer counting (canonical 19-mers)
-    ├─ Presence-absence matrix (scipy sparse)
-    ├─ Compacted De Bruijn graph → unitigs
-    ├─ Exact genome mapping + GFF3 annotation
-    ├─ Sliding window conservation scoring
-    ├─ MAFFT local MSA → primer3 TaqMan design
-    ├─ MFEprimer in-silico PCR validation
-    │
-    ▼
-Output: primers.tsv + report.html + conserved_region.fasta
-```
+![Pipeline Overview](docs/pipeline_overview.png)
+
+The pipeline discovers conserved regions without global alignment, then designs TaqMan primer-probe sets with in-silico validation:
+
+1. **k-mer Counting** — Decompose genomes into canonical 19-mers
+2. **De Bruijn Graph** — Merge overlapping conserved k-mers into unitigs
+3. **Genome Mapping** — Map unitigs back to genomic coordinates
+4. **Window Scoring** — Score 300bp windows by conservation across genomes
+5. **Primer Design** — MAFFT local MSA + primer3 with TaqMan rules
+6. **Validate & Report** — MFEprimer in-silico PCR + HTML report
 
 ## Install
 
@@ -71,6 +67,38 @@ open results/report.html        # Interactive HTML report
 cat results/primers.tsv          # Primer-probe candidates
 cat results/pipeline_summary.json # Pipeline statistics
 ```
+
+### Terminal Output
+
+```
+skipalign v0.1.0 — Alignment-free primer design
+
+  [1/6] Loading genomes ... ✓  8 genomes loaded
+  [2/6] Counting k-mers & building PA matrix ... ✓  14,875 unique 19-mers, 264 conserved
+  [3/6] Extracting unitigs ... ✓  103 unitigs (19-29bp)
+  [4/6] Mapping to genomes ... ✓  447 hits across 8 genomes
+  [5/6] Scoring windows ... ✓  60 windows above threshold
+  [6/6] Designing primers ... ✓  3 candidate sets
+  [7/7] Validating with MFEprimer ... ✓  coverage: 62.5%, 62.5%, 62.5%
+
+  ✓ Pipeline complete in 0.9s
+```
+
+## Example Results
+
+See [`tests/example_output/`](tests/example_output/) for a complete set of output files from 8 synthetic test genomes.
+
+### Conservation Landscape
+
+Sliding window scores across the genome — the peak at ~1000-1300bp is the discovered conserved region:
+
+![Conservation Landscape](docs/conservation_landscape.png)
+
+### MSA Conservation Heatmap
+
+Per-position conservation in the extracted 600bp design region (green = conserved, red = variable):
+
+![MSA Heatmap](docs/msa_heatmap.png)
 
 ## Commands
 

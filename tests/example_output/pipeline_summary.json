@@ -1,0 +1,51 @@
+{
+  "version": "0.1.0",
+  "params": {
+    "k": 19,
+    "window": 300,
+    "min_genomes": 3
+  },
+  "input": {
+    "genomes": 8,
+    "total_bp": 16000
+  },
+  "results": {
+    "unique_kmers": 14875,
+    "conserved_kmers": 264,
+    "unitigs": 103,
+    "mapping_hits": 447,
+    "scored_windows": 60,
+    "conserved_region": {
+      "start": 850,
+      "end": 1450,
+      "feature": null,
+      "genome_count": 8,
+      "coverage_score": 9137
+    },
+    "primer_candidates": 3
+  },
+  "runtime_seconds": 0.92,
+  "validation": [
+    {
+      "primer_set": "PS_001",
+      "hit_sequences": 5,
+      "total_sequences": 8,
+      "coverage_percent": 62.5,
+      "amplicon_count": 5
+    },
+    {
+      "primer_set": "PS_002",
+      "hit_sequences": 5,
+      "total_sequences": 8,
+      "coverage_percent": 62.5,
+      "amplicon_count": 5
+    },
+    {
+      "primer_set": "PS_003",
+      "hit_sequences": 5,
+      "total_sequences": 8,
+      "coverage_percent": 62.5,
+      "amplicon_count": 5
+    }
+  ]
+}
