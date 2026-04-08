@@ -27,6 +27,7 @@ from skipalign.primer import (
 from skipalign.reporter import generate_html_report
 from skipalign.scorer import ScoredWindow, score_windows
 from skipalign.unitig import extract_unitigs
+from skipalign.validator import check_mfeprimer as check_mfeprimer_bin, run_validation, format_validation_summary
 
 console = Console()
 
@@ -133,6 +134,26 @@ def run_pipeline(
         consensus = ""
         conservation = []
 
+    # MFEprimer validation (optional)
+    validation_results = []
+    if primers and check_mfeprimer_bin():
+        console.print("  [7/7] Validating with MFEprimer ...", end=" ")
+        # Build combined DB from input genomes
+        db_fasta = work_path / "all_genomes.fasta"
+        with open(db_fasta, "w") as f:
+            for name, seq in sorted(genomes.items()):
+                f.write(f">{name}\n{seq}\n")
+        max_amp = design_region + 300
+        validation_results = run_validation(primers, db_fasta, work_path / "validation", max_amplicon_size=max_amp)
+        coverages = [f"{v.coverage_percent}%" for v in validation_results]
+        console.print(f"[green]✓[/green]  coverage: {', '.join(coverages)}")
+
+        # Write validation summary
+        from skipalign.validator import format_validation_summary
+        (out_path / "validation_summary.txt").write_text(format_validation_summary(validation_results))
+    elif primers and not check_mfeprimer_bin():
+        console.print("  [7/7] [yellow]⚠[/yellow]  MFEprimer not found — skipping validation")
+
     elapsed = time.time() - start_time
 
     # Write outputs
@@ -154,6 +175,7 @@ def run_pipeline(
         region_end=region_end,
         primer_count=len(primers),
         elapsed=elapsed,
+        validation_results=validation_results,
     )
 
     # Generate HTML report
@@ -166,6 +188,7 @@ def run_pipeline(
             conservation_scores=conservation,
             region_start=region_start,
             region_end=region_end,
+            validation_results=validation_results,
         )
 
     console.print(f"\n  [green]✓ Pipeline complete in {elapsed:.1f}s[/green]")
@@ -209,6 +232,7 @@ def _write_summary(
     region_end: int,
     primer_count: int,
     elapsed: float,
+    validation_results: list | None = None,
 ) -> dict:
     summary = {
         "version": __version__,
@@ -234,5 +258,16 @@ def _write_summary(
         },
         "runtime_seconds": round(elapsed, 2),
     }
+    if validation_results:
+        summary["validation"] = [
+            {
+                "primer_set": v.primer_set_id,
+                "hit_sequences": v.hit_sequences,
+                "total_sequences": v.total_db_sequences,
+                "coverage_percent": v.coverage_percent,
+                "amplicon_count": len(v.amplicons),
+            }
+            for v in validation_results
+        ]
     path.write_text(json.dumps(summary, indent=2))
     return summary

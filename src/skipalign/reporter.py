@@ -83,6 +83,7 @@ def generate_html_report(
     conservation_scores: list[float],
     region_start: int,
     region_end: int,
+    validation_results: list | None = None,
 ) -> None:
     """Generate a self-contained HTML report."""
     genome_count = summary["input"]["genomes"]
@@ -92,6 +93,7 @@ def generate_html_report(
 
     primers_html = _render_primers_table(primers)
     summary_html = _render_summary_table(summary)
+    validation_html = _render_validation_table(validation_results) if validation_results else ""
     windows_html = _render_windows_table(windows[:20])
 
     html = f"""<!DOCTYPE html>
@@ -156,7 +158,10 @@ def generate_html_report(
   <h2>4. Primer-Probe Candidates</h2>
   <div class="card">{primers_html if primers_html else "<p>No candidates generated</p>"}</div>
 
-  <h2>5. Top Scored Windows</h2>
+  <h2>5. In-silico PCR Validation (MFEprimer)</h2>
+  <div class="card">{validation_html if validation_html else "<p>MFEprimer not available — skipped</p>"}</div>
+
+  <h2>6. Top Scored Windows</h2>
   <div class="card">{windows_html}</div>
 
   <div class="footer">
@@ -211,6 +216,26 @@ def _render_primers_table(primers: list[PrimerProbeSet]) -> str:
                 issue_str = f'<span class="issue">{issue_str}</span>'
             html += f"<tr><td>PS_{i:03d}</td><td>{oligo_type}</td><td><code>{seq}</code></td>"
             html += f"<td>{len(seq)}</td><td>{tm}</td><td>{gc}</td><td>{deg}</td><td>{issue_str}</td></tr>"
+    html += "</table>"
+    return html
+
+
+def _render_validation_table(validation_results: list) -> str:
+    if not validation_results:
+        return ""
+    html = """<table>
+    <tr><th>Primer Set</th><th>Forward</th><th>Reverse</th>
+    <th>Hits</th><th>Total</th><th>Coverage</th><th>Amplicons</th></tr>"""
+    for v in validation_results:
+        cov_class = "ok" if v.coverage_percent >= 80 else ("issue" if v.coverage_percent < 50 else "")
+        cov_str = f'<span class="{cov_class}">{v.coverage_percent}%</span>' if cov_class else f"{v.coverage_percent}%"
+        sizes = sorted(set(a.size for a in v.amplicons)) if v.amplicons else []
+        size_str = f"{min(sizes)}-{max(sizes)}bp" if sizes else "—"
+        html += f"<tr><td>{v.primer_set_id}</td>"
+        html += f"<td><code>{v.forward}</code></td>"
+        html += f"<td><code>{v.reverse}</code></td>"
+        html += f"<td>{v.hit_sequences}</td><td>{v.total_db_sequences}</td>"
+        html += f"<td>{cov_str}</td><td>{len(v.amplicons)} ({size_str})</td></tr>"
     html += "</table>"
     return html
 
