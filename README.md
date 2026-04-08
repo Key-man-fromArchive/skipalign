@@ -160,9 +160,15 @@ If MAFFT is not installed, the pipeline will still discover conserved regions bu
 
 ## Citation
 
-If you use skipalign, please cite the original method:
+If you use skipalign, please cite **both the software and the original method paper**:
 
+**Software:**
+> skipalign: Alignment-free conserved region discovery and RT-qPCR primer-probe design (2026). https://github.com/Key-man-fromArchive/skipalign
+
+**Method:**
 > Sayasit K, Chaimayo C, Nuwong W, et al. Alignment-Free Guided Design of a Pan-Orthoflavivirus RT-qPCR Assay. *bioRxiv* (2026). https://doi.org/10.64898/2026.03.17.712358
+
+GitHub's "Cite this repository" button (sidebar) provides BibTeX and APA formats via [`CITATION.cff`](CITATION.cff).
 
 ## License
 

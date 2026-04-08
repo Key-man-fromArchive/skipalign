@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the original method paper."
+title: "skipalign: Alignment-free conserved region discovery and RT-qPCR primer-probe design"
+type: software
+version: 0.1.0
+date-released: 2026-04-08
+license: MIT
+url: "https://github.com/Key-man-fromArchive/skipalign"
+repository-code: "https://github.com/Key-man-fromArchive/skipalign"
+keywords:
+  - bioinformatics
+  - alignment-free
+  - k-mer
+  - RT-qPCR
+  - primer-design
+  - orthoflavivirus
+  - de-bruijn-graph
+  - diagnostics
+authors:
+  - alias: "Key-man-fromArchive"
+    affiliation: "INVIRUS Tech"
+    email: "ceo@invirustech.com"
+references:
+  - type: article
+    title: "Alignment-Free Guided Design of a Pan-Orthoflavivirus RT-qPCR Assay"
+    authors:
+      - family-names: Sayasit
+        given-names: Khanate
+      - family-names: Chaimayo
+        given-names: Chutikarn
+      - family-names: Nuwong
+        given-names: Warinya
+      - family-names: Boondouylan
+        given-names: Tharathip
+      - family-names: Tanliang
+        given-names: Nattaya
+      - family-names: Nookaew
+        given-names: Intawat
+      - family-names: Horthongkham
+        given-names: Navin
+    doi: "10.64898/2026.03.17.712358"
+    journal: "bioRxiv"
+    year: 2026
