@@ -4,94 +4,89 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Implementation of the **Alignment-Free Guided Design Pipeline** for pan-Orthoflavivirus RT-qPCR assay development, based on [Sayasit et al. (2026) bioRxiv](https://doi.org/10.64898/2026.03.17.712358). The pipeline replaces traditional multiple sequence alignment (MSA) with k-mer analysis and compacted De Bruijn graphs to discover conserved diagnostic targets across highly divergent viral genomes.
+**skipalign** — Alignment-free conserved region discovery and RT-qPCR primer-probe design CLI tool. Based on [Sayasit et al. (2026) bioRxiv](https://doi.org/10.64898/2026.03.17.712358). Targets clinical diagnostic developers building RT-qPCR kits for highly divergent viral genera.
 
 Reference paper: `docs/paper/Aligment-free-guided.pdf`
 
-## Pipeline Architecture (7 stages)
+## Build & Test Commands
 
-The pipeline executes sequentially; each stage produces artifacts consumed by downstream stages:
+```bash
+# Install (development mode)
+pip install -e ".[dev]"
 
-```
-Stage 1: Data Acquisition & Preprocessing
-  NCBI RefSeq download (18,678 accessions) → filter by keywords ("complete genome", etc.)
-  → 11,846 genomes (10,472 non-segmented + 1,374 segmented)
-  → filename convention: <taxid>.fasta or <taxid_accession>.fasta
-  Taxonomic annotation via TaxonKit v0.20.0
+# Run all tests
+pytest -v
 
-Stage 2: AF Phylogeny (Mash-style Jaccard)
-  KITSUNE dmatrix module, k=11 fixed, Jaccard → Mash transform D = (-1/k)ln(2J/(1+J))
-  → pairwise distance matrix → neighbor-joining tree (Pestivirus outgroup)
-  Purpose: clade visualization/validation only, NOT inferential phylogenetics
+# Run a single test file
+pytest tests/test_kmer.py -v
 
-Stage 3: ACF-guided k Selection (KITSUNE)
-  KITSUNE ACF with --fast option (Jellyfish, no frequency filter)
-  Each Flaviviridae genome queried against full RefSeq reference set
-  Subset to Orthoflavivirus → plot ACF vs k (k=9..51)
-  Key finding: k=19 is shortest k where Orthoflavivirus has specific common k-mers
-  Output: 526,787 unique 19-mers across 51 orthoflaviviral genomes
+# Run a single test
+pytest tests/test_integration.py::test_window_scoring_finds_conserved_region -v
 
-Stage 4: Compacted De Bruijn Graph → Unitigs
-  Input: PA (presence-absence) matrix of 19-mers × 51 genomes
-  Bifrost for cDBG construction → 4,814 unitigs total
-  High-confidence filter: unitigs present in ≥3 genomes → 339 unitigs (19–41 bp)
+# Lint
+ruff check src/ tests/
 
-Stage 5: Exact Mapping & Feature Annotation
-  Bowtie v1.0.0 (exhaustive exact-match, all zero-mismatch hits)
-  SAMtools v1.16.1 (SAM→BAM) → BEDtools v2.30.0 (BAM→BED)
-  BEDtools intersect with GFF3 annotations → functional context per unitig
+# Full pipeline (requires MAFFT in PATH)
+skipalign run -i tests/data/genomes -g tests/data/annotations -o /tmp/results --top 3
 
-Stage 6: Conserved Window Selection & Scoring
-  Sliding 300bp windows across features, scored by:
-    (i)  total unitig bp coverage
-    (ii) number of genomes with unitig hits
-  Top windows at cutoff ≥15 genomes → combine adjacent windows → 600bp design region
-  Key result: NS5 gene, positions ~8.7–9.3 kbp
+# ACF k sweep
+skipalign find-k -i tests/data/genomes --k-min 9 --k-max 31
 
-Stage 7: Sequence Extraction & Primer-Probe Design
-  Extract 600bp from each genome → MAFFT local MSA
-  Manual primer-probe design rules (TaqMan):
-    - Forward primer: conserved 3' end, ≤100 degenerate variants, no >4 consecutive G
-    - Probe: no 5' G, no >4 G-run, no ≥6 A-run, Tm > primer Tm
-    - IUPAC ambiguity at ≥50% frequency threshold
-  In silico validation: BLASTN vs NCBI nr (≤2 mismatches)
-  Final: 23nt F-primer, 24nt R-primer, 25nt probe (Cy5/BHQ2), 135bp amplicon
+# Docker
+docker build -t skipalign .
+docker run -v ./data:/data skipalign run -i /data/genomes -o /data/results
 ```
 
-## External Tools & Dependencies
+## Architecture
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| KITSUNE | - | ACF calculation, k-mer phylogeny, dmatrix |
-| Jellyfish | 2.3.1 | k-mer counting |
-| Bifrost | - | Compacted De Bruijn graph, unitig extraction |
-| Bowtie | 1.0.0 | Exact-match short sequence mapping |
-| SAMtools | 1.16.1 | SAM/BAM manipulation |
-| BEDtools | 2.30.0 | Genomic interval operations, GFF3 intersection |
-| MAFFT | - | Local MSA of extracted conserved regions |
-| TaxonKit | 0.20.0 | NCBI taxonomy annotation |
-| Python 3 | ≥3.10 | Pipeline orchestration, analysis, visualization |
+```
+src/skipalign/
+├── cli.py        # Typer CLI — `run`, `find-k` commands
+├── pipeline.py   # Orchestrator — chains all stages with Rich progress
+├── kmer.py       # k-mer counting, canonical form
+├── matrix.py     # Presence-absence matrix (scipy sparse)
+├── unitig.py     # Compacted De Bruijn graph → unitig extraction
+├── mapper.py     # Exact string matching + GFF3 annotation
+├── scorer.py     # 300bp sliding window scoring
+├── primer.py     # MAFFT + consensus + primer3 + TaqMan rules
+├── reporter.py   # Self-contained HTML report (matplotlib base64)
+└── io.py         # FASTA/GFF3 I/O
+```
 
-## Key Biological Parameters
+**Data flow**: `FASTA genomes → kmer.py → matrix.py → unitig.py → mapper.py → scorer.py → primer.py → reporter.py`
 
-- **k-mer length for genus-level specificity**: k=19 (ACF-derived)
-- **k-mer length for clade visualization**: k=11 (KITSUNE benchmark)
-- **High-confidence unitig threshold**: present in ≥3 of 51 genomes
-- **Conserved window size**: 300bp (scoring), 600bp (design extraction)
-- **Genome cutoff for conservation**: ≥15 of 51 genomes
-- **Target region**: NS5 gene (~8.7–9.3 kbp on Orthoflavivirus genome)
-- **Degeneracy cap**: ≤100 variants per oligonucleotide
-- **Consensus base threshold**: ≥50% per-position frequency
-- **Max mismatches for BLAST specificity check**: ≤2
+**External binary dependencies**: MAFFT (required for primer design), MFEprimer (optional, for validation)
 
-## Design Decisions & Rationale
+## Pipeline (simplified from paper)
 
-- **NS5 over UTRs**: UTRs show high conservation but contain sfRNA artifacts that inflate copy numbers; NS5 provides stoichiometrically accurate viral genome quantification.
-- **k=19 selection**: Shortest k-mer length where Orthoflavivirus genus retains specific common k-mers across all 51 genomes — balances specificity against sensitivity.
-- **300bp window (not amplicon size)**: 2-4x typical TaqMan amplicon (70–150bp); gives room for primer/probe placement while maintaining fine genomic resolution.
-- **Compacted De Bruijn graph**: Merges overlapping k-mers into unitigs to eliminate trivial sliding-window duplicates; reduces 526,787 k-mers → 4,814 unitigs.
-- **Exact matching only**: Bowtie in zero-mismatch mode ensures unitigs faithfully represent sequences actually present in genomes.
+The paper uses 8+ external tools (KITSUNE, Jellyfish, Bifrost, Bowtie, SAMtools, BEDtools, etc.). This implementation replaces them with pure Python equivalents since the target dataset (51 genomes × ~11kb) is small enough:
 
-## NotebookLM
+| Paper Tool | This Implementation | Why |
+|-----------|-------------------|-----|
+| Jellyfish | `kmer.py` (dict/set) | 561kb total sequence — trivially fast in Python |
+| Bifrost | `unitig.py` (networkx-style) | 339 unitigs — no need for C++ cDBG |
+| Bowtie | `mapper.py` (str.find) | Exact match on 11kb sequences |
+| BEDtools | `mapper.py` (interval logic) | Simple interval intersection |
+| MAFFT | MAFFT (kept as-is) | Only external dependency — 600bp MSA |
 
-Project notebook alias: (to be configured)
+## Key Parameters (paper defaults)
+
+| Parameter | Default | Constant Location |
+|-----------|---------|------------------|
+| k-mer length | 19 | `primer.py` / CLI `--k` |
+| Window size | 300bp | CLI `--window` |
+| Design region | 600bp | CLI `--design-region` |
+| Min genomes | 3 | CLI `--min-genomes` |
+| Degeneracy cap | 100 | `primer.py::MAX_DEGENERACY` |
+| Consensus threshold | 50% | `primer.py::CONSENSUS_THRESHOLD` |
+
+## Test Data
+
+`tests/data/` contains 8 synthetic genomes (2000bp each) with a planted conserved region at positions 1000-1300 inside a "NS5" gene annotation. The pipeline should discover this region. Generated by `tests/generate_test_data.py`.
+
+## Planning Documents
+
+`docs/planning/` contains 7 planning docs + TASKS.md:
+- `01-prd.md` — Product requirements
+- `02-trd.md` — Technical requirements
+- `06-tasks.md` — Implementation task plan (6 phases)
