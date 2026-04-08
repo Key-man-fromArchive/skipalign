@@ -17,8 +17,9 @@ keywords:
   - de-bruijn-graph
   - diagnostics
 authors:
-  - alias: "Key-man-fromArchive"
-    affiliation: "INVIRUS Tech"
+  - family-names: Park
+    given-names: Kibeom
+    affiliation: "Invirustech, Gwangju, South Korea"
     email: "ceo@invirustech.com"
 references:
   - type: article
