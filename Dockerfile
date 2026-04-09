@@ -11,7 +11,7 @@ RUN wget -q https://github.com/quwubin/MFEprimer-3.0/releases/download/v4.2.4/mf
     && mv /tmp/mfeprimer /usr/local/bin/mfeprimer
 
 WORKDIR /app
-COPY pyproject.toml .
+COPY pyproject.toml README.md ./
 COPY src/ src/
 RUN pip install --no-cache-dir ".[web]" matplotlib
 
