@@ -22,7 +22,8 @@ def run(
     window: int = typer.Option(300, "--window", "-w", help="Scoring window size in bp"),
     design_region: int = typer.Option(600, "--design-region", help="Design region extraction size in bp"),
     output_dir: str = typer.Option("results", "--output", "-o", help="Output directory"),
-    top: int = typer.Option(5, "--top", help="Number of top primer candidates"),
+    top: int = typer.Option(5, "--top", help="Number of top primer candidates per region"),
+    top_regions: int = typer.Option(3, "--top-regions", help="Number of candidate conserved regions"),
     step: int = typer.Option(10, "--step", help="Window scoring step size in bp"),
     no_report: bool = typer.Option(False, "--no-report", help="Skip HTML report generation"),
 ) -> None:
@@ -38,6 +39,7 @@ def run(
         window_size=window,
         design_region=design_region,
         top_n=top,
+        top_regions=top_regions,
         step=step,
         no_report=no_report,
     )
