@@ -161,15 +161,28 @@ Use this when targeting a new viral genus where the optimal k is unknown.
 
 If MAFFT is not installed, the pipeline will still discover conserved regions but skip primer design. If MFEprimer is not installed, validation is skipped.
 
+## Related Work
+
+| Tool | Approach | Scope | Source |
+|------|----------|-------|--------|
+| **PriMux** (Hysom et al., 2012) | k-mer frequency → degenerate primer selection (suffix array + Vmatch) | Direct primer design with multiplex optimization | [SourceForge](https://sourceforge.net/projects/primux/) |
+| **skipalign** (this tool) | k-mer → De Bruijn graph → unitig → window scoring | Conserved region discovery + template extraction | [GitHub](https://github.com/Key-man-fromArchive/skipalign) |
+| **Sayasit et al.** (2026) | k-mer + KITSUNE/Bifrost/Bowtie (8+ tools) | Full pipeline (academic, no source code) | [bioRxiv](https://doi.org/10.64898/2026.03.17.712358) |
+
+**Key distinction**: PriMux designs primers directly from k-mer frequency without identifying conserved genomic regions. skipalign finds *where* conserved regions are located (genomic coordinates, gene context) and provides template sequences for primer design in specialized tools. The two approaches are complementary — PriMux optimizes primer selection, skipalign optimizes target discovery.
+
 ## Citation
 
 If you use skipalign, please cite **both the software and the original method paper**:
 
 **Software:**
-> skipalign: Alignment-free conserved region discovery and RT-qPCR primer-probe design (2026). https://github.com/Key-man-fromArchive/skipalign
+> skipalign: Alignment-free conserved region discovery for RT-qPCR primer-probe design (2026). https://github.com/Key-man-fromArchive/skipalign
 
 **Method:**
 > Sayasit K, Chaimayo C, Nuwong W, et al. Alignment-Free Guided Design of a Pan-Orthoflavivirus RT-qPCR Assay. *bioRxiv* (2026). https://doi.org/10.64898/2026.03.17.712358
+
+**Related:**
+> Hysom DA, Naraghi-Arani P, Elsheikh M, et al. Skip the Alignment: Degenerate, Multiplex Primer and Probe Design Using K-mer Matching Instead of Alignments. *PLoS ONE* 7(4):e34560 (2012). https://doi.org/10.1371/journal.pone.0034560
 
 GitHub's "Cite this repository" button (sidebar) provides BibTeX and APA formats via [`CITATION.cff`](CITATION.cff).
 

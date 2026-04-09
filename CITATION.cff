@@ -42,3 +42,21 @@ references:
     doi: "10.64898/2026.03.17.712358"
     journal: "bioRxiv"
     year: 2026
+  - type: article
+    title: "Skip the Alignment: Degenerate, Multiplex Primer and Probe Design Using K-mer Matching Instead of Alignments"
+    authors:
+      - family-names: Hysom
+        given-names: David A
+      - family-names: Naraghi-Arani
+        given-names: Pejman
+      - family-names: Elsheikh
+        given-names: Maher
+      - family-names: Carrillo
+        given-names: A Celena
+      - family-names: Williams
+        given-names: Peter L
+      - family-names: Gardner
+        given-names: Shea N
+    doi: "10.1371/journal.pone.0034560"
+    journal: "PLoS ONE"
+    year: 2012
