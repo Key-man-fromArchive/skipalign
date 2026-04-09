@@ -4,15 +4,17 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Alignment-free conserved region discovery and RT-qPCR primer-probe design for highly divergent viral genera.
+Alignment-free conserved region discovery for RT-qPCR primer-probe design in highly divergent viral genera.
 
 Based on the alignment-free k-mer guided approach from [Sayasit et al. (2026)](https://doi.org/10.64898/2026.03.17.712358).
 
 ## Why skipalign?
 
-Traditional primer design requires multiple sequence alignment (MSA) across all target genomes — this breaks down when nucleotide divergence exceeds 25-30%. **skipalign** discovers conserved regions *without* alignment using k-mer analysis and compacted De Bruijn graphs, then applies MSA only on the small conserved region for final primer-probe design.
+Designing pan-genus RT-qPCR assays for highly variable viruses (>25-30% divergence) requires finding **where to target** — and that's the hard part. Traditional MSA fails at this divergence level, producing unreliable alignments with false conservation signals.
 
-This makes it possible to design pan-genus diagnostic assays for highly variable viral groups like Orthoflavivirus (dengue, Zika, JEV).
+**skipalign** solves the discovery problem: it finds genuinely conserved regions *without* alignment using k-mer analysis and compacted De Bruijn graphs. It then extracts template sequences with per-position conservation scores, giving you the ideal starting point for primer-probe design in your tool of choice (Geneious, IDT PrimerQuest, Primer-BLAST, etc.).
+
+> **Note**: skipalign focuses on **conserved region discovery and template extraction**. It provides candidate primer suggestions via primer3 as a convenience, but final primer-probe optimization should be done in specialized design tools with manual review.
 
 ## Pipeline
 
@@ -24,8 +26,9 @@ The pipeline discovers conserved regions without global alignment, then designs 
 2. **De Bruijn Graph** — Merge overlapping conserved k-mers into unitigs
 3. **Genome Mapping** — Map unitigs back to genomic coordinates
 4. **Window Scoring** — Score 300bp windows by conservation across genomes
-5. **Primer Design** — MAFFT local MSA + primer3 with TaqMan rules
-6. **Validate & Report** — MFEprimer in-silico PCR + HTML report
+5. **Template Extraction** — MAFFT local MSA + per-position conservation scores
+6. **Candidate Primers** — primer3 suggestions (reference, not final design)
+7. **Validate & Report** — MFEprimer in-silico PCR + HTML report
 
 ## Install
 

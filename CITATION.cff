@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the original method paper."
-title: "skipalign: Alignment-free conserved region discovery and RT-qPCR primer-probe design"
+title: "skipalign: Alignment-free conserved region discovery for RT-qPCR primer-probe design"
 type: software
 version: 0.1.0
 date-released: 2026-04-08
