@@ -77,6 +77,19 @@ def find_k(
     typer.echo(f"\nResults written to {output}")
 
 
+@app.command()
+def web(
+    port: int = typer.Option(7860, "--port", "-p", help="Server port"),
+    share: bool = typer.Option(False, "--share", help="Create public Gradio link"),
+) -> None:
+    """Launch the web GUI."""
+    from skipalign.web import create_app
+
+    typer.echo(f"skipalign v{__version__} — launching web interface on port {port}")
+    app_instance = create_app()
+    app_instance.launch(server_name="0.0.0.0", server_port=port, share=share)
+
+
 @app.callback(invoke_without_command=True)
 def version(
     version: bool = typer.Option(False, "--version", "-V", help="Show version"),
